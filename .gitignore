@@ -1,3 +1,41 @@
+# Dependencies
+node_modules
+
+# Next.js
+.next
+out
+.vercel
+
+# Build outputs
+dist
+coverage
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea
+*.swp
+
+# Turbo / pnpm
+.turbo
+.pnpm-store
+
+# Local uploads (do not commit)
+public/uploads
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
