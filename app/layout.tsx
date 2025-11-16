@@ -4,6 +4,18 @@ import './globals.css'
 import { CartProvider } from '@/contexts/CartContext'
 import { AuthProvider } from '@/contexts/AuthContext'
 
+// Polyfill `location` for server-side / static generation to avoid
+// `ReferenceError: location is not defined` coming from Next.js router internals.
+if (typeof window === 'undefined' && typeof (globalThis as any).location === 'undefined') {
+  ;(globalThis as any).location = {
+    origin: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    href: '/',
+    pathname: '/',
+    search: '',
+    hash: '',
+  } as any
+}
+
 const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
