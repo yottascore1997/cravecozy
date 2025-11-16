@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { useAuth } from '@/contexts/AuthContext'
@@ -9,6 +9,7 @@ import { Mail, Lock, User, Phone, UserPlus, Loader, AlertCircle } from 'lucide-r
 
 export default function SignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { signup } = useAuth()
   const [formData, setFormData] = useState({
     name: '',
@@ -49,7 +50,7 @@ export default function SignupPage() {
     try {
       await signup(formData.name, formData.email, formData.password, formData.phone)
       // Redirect to home or previous page
-      const returnUrl = new URLSearchParams(window.location.search).get('return')
+      const returnUrl = searchParams.get('return')
       router.push(returnUrl || '/')
     } catch (err: any) {
       setError(err.message || 'Signup failed. Please try again.')

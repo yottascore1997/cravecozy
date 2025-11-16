@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
-export async function GET(request?: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
     // Get category filter from query params if exists
-    let categoryFilter = null
-    if (request) {
-      const url = new URL(request.url)
-      categoryFilter = url.searchParams.get('category')
-    }
+    const url = new URL(request.url)
+    const categoryFilter = url.searchParams.get('category')
 
     // Query products without category field (since column might not exist)
     const products = await prisma.product.findMany({

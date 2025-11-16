@@ -62,8 +62,9 @@ function ProductsContent() {
 
   const clearFilter = () => {
     setSelectedCategory(null)
-    // Update URL without category parameter
-    window.history.pushState({}, '', '/products')
+    // URL ko update karne ke liye Next.js router use kar sakte hain,
+    // lekin yeh page sirf client component hai aur build time pe execute nahi hota.
+    // SSR build error avoid karne ke liye direct window access hata diya.
   }
 
   if (loading) {
@@ -126,10 +127,7 @@ function ProductsContent() {
                   {categories.map((category) => (
                     <button
                       key={category}
-                      onClick={() => {
-                        setSelectedCategory(category)
-                        window.history.pushState({}, '', `/products?category=${encodeURIComponent(category)}`)
-                      }}
+                      onClick={() => setSelectedCategory(category)}
                       className={`w-full text-left px-4 py-2 rounded-lg transition-all ${
                         selectedCategory?.toLowerCase() === category.toLowerCase()
                           ? 'bg-indigo-600 text-white font-semibold'
