@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  slug        String    @unique @db.VarChar(255)
+  imageUrl    String?   @map("image_url") @db.VarChar(500)
+  description String?   @db.Text
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  categoryRel Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?   @db.Text
+  price       Decimal   @db.Decimal(10, 2)
+  imageUrl    String?   @map("image_url") @db.VarChar(500)
+  category    String?   @db.VarChar(100)
+  categoryId  Int?      @map("category_id")
+  categoryRel Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  stock       Int       @default(0)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  orderItems  OrderItem[]
+
+  @@map("products")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(255)
+  email     String    @unique @db.VarChar(255)
+  password  String    @db.VarChar(255)
+  phone     String?   @db.VarChar(20)
+  role      String    @default("user") @db.VarChar(20)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  orderNumber     String      @unique @map("order_number") @db.VarChar(50)
+  userId          Int?        @map("user_id")
+  customerName    String      @map("customer_name") @db.VarChar(255)
+  customerEmail   String      @map("customer_email") @db.VarChar(255)
+  customerPhone   String      @map("customer_phone") @db.VarChar(20)
+  deliveryAddress String      @map("delivery_address") @db.Text
+  deliveryCity    String      @map("delivery_city") @db.VarChar(100)
+  deliveryState   String      @map("delivery_state") @db.VarChar(100)
+  deliveryZip     String      @map("delivery_zip") @db.VarChar(20)
+  paymentMethod   String      @default("COD") @map("payment_method") @db.VarChar(50)
+  status          String      @default("pending") @db.VarChar(50)
+  subtotal        Decimal     @db.Decimal(10, 2)
+  shipping        Decimal     @db.Decimal(10, 2)
+  total           Decimal     @db.Decimal(10, 2)
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  items           OrderItem[]
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          Int      @id @default(autoincrement())
+  orderId     Int      @map("order_id")
+  productId   Int      @map("product_id")
+  productName String   @map("product_name") @db.VarChar(255)
+  price       Decimal  @db.Decimal(10, 2)
+  quantity    Int
+  imageUrl    String?  @map("image_url") @db.VarChar(500)
+  createdAt   DateTime @default(now()) @map("created_at")
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
